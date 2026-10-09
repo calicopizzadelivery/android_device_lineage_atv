@@ -7,13 +7,29 @@
     <!-- Paths to the libraries that contain device specific key handlers -->
     <string-array name="config_deviceKeyHandlerLibs" translatable="false">
         <item>/system_ext/priv-app/LineageParts/LineageParts.apk</item>
-        <item>/system_ext/priv-app/LineageParts/LineageParts.apk</item>
         <item>/system_ext/framework/JetsonTVKeyHandler.jar</item>
+        <item>/system_ext/priv-app/LineageParts/LineageParts.apk</item>
     </string-array>
-    <!-- Names of the key handler classes -->
+    <!-- Names of the key handler classes.
+
+         Ours sits ahead of atv's deliberately. atv's KeyHandler maps eight
+         branded remote keys to streaming apps from its own resource arrays
+         (lineage-sdk keyhandler_keycodes / keyhandler_packages), and it
+         consumes the key whether or not the target launched:
+
+             launchTarget(targetName);
+             return null;
+
+         Six of its eight targets do not exist on this build (no Netflix,
+         YouTube TV, Disney+, HBO, Play Store or Google TV), so those keys
+         were silently swallowed, logging only
+         "KeyHandler: Cannot launch com.netflix.ninja". Running first lets us
+         claim KEYCODE_BUTTON_4, the SHIELD remote's Netflix key, for Kodi.
+         Ours passes every other keycode straight through, so atv's handler
+         still gets the rest. -->
     <string-array name="config_deviceKeyHandlerClasses" translatable="false">
         <item>org.lineageos.lineageparts.gestures.KeyHandler</item>
-        <item>org.lineageos.lineageparts.atv.KeyHandler</item>
         <item>org.lineageos.jetsontv.keyhandler.GamepadKeyHandler</item>
+        <item>org.lineageos.lineageparts.atv.KeyHandler</item>
     </string-array>
 </resources>
